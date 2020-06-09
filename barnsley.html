@@ -14,8 +14,19 @@
           src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
 		</script>
 		<script>
+			function setupCanvas() {
+					console.info("Resetting canvas");
+					var canvas = document.getElementById("canvas");
+					var	context = canvas.getContext("2d");
+					var width = canvas.width = canvas.offsetWidth;
+					var height = canvas.height = canvas.offsetHeight;
+					context.translate(width / 2, height);
+					context.clearRect(-width, -height, 2 * width, 2 * height);
+			}
+
 			function readRules() {
-					var nrules = [{}, {}, {}, {}];
+					var nrules = [{"color": "red"}, {"color": "green"},
+												{"color": "blue"}, {"color": "purple"}];
 					for (var i = 1; i < 5; i++) {
 							for (x of "abcdef") {
 									nrules[i - 1][x] = 1 * document.getElementById("s" + i + "-" + x).value;
@@ -23,10 +34,8 @@
 					}
 					var tp = 100;
 					for (var i = 1; i < 4; i++) {
-							console.log((1 * document.getElementById("s" + i + "-p").value) / 100);
 							nrules[i - 1]["p"] = (1 * document.getElementById("s" +
 																																i + "-p").value) / 100;
-							console.log(nrules[i - 1]["p"]);
 							tp -= 1 * document.getElementById("s" + i + "-p").value
 					}
 					nrules[3]["p"] = tp / 100;
@@ -43,50 +52,47 @@
 
 			function getRule(rules) {
 					var rand = Math.random();
-					// console.info(rand);
 					for(var i = 0; i < rules.length; i++) {
-							// if (rand <= rules[i]["k"]) return rules[i]
 							var rule = rules[i];
-							console.log(rule)
-							if(rand < rule.weight) {
+							if(rand < rule.p) {
 									return rule;
 							}
-							rand -= rule.weight;
-							console.log(rand);
+							rand -= rule.p;
 					}
-					console.error("unreachable");
-					console.info(rules);
+					console.warn("unreachable")
 					return rules[3];
 			}
 
-			function plot(x, y, color) {
+			function plot(x, y, color, zfactor) {
 					// TODO
 					var canvas = document.getElementById("canvas");
 					var	context = canvas.getContext("2d");
-					var width = canvas.width = window.innerWidth;
-					var height = canvas.height = window.innerHeight;
 					context.fillStyle = color;
-					context.fillRect(x * 350, -y * 350, 0.5, 0.5);
+					context.fillRect(x * zfactor, -y * zfactor, 0.5, 0.5);
 			}
 
-			function iterate(rules) {
+			function iterate(rules, counter) {
+					if (counter <= 0) {
+							console.info("Redraw finished");
+							return;
+					}
+					// if (counter % 100 == 0) {
+					// 		console.debug("iterate(" + counter + ") called with the following rules:");
+					// 		console.debug(rules);
+					// }
+					var usecolors = document.getElementById("s-use-colors").checked;
+					var zfactor = 1 * document.getElementById("s-zfactor").value;
 					var x = Math.random();
 					var y = Math.random();
-					for(var i = 0; i < 100; i++) {
-							try {
-									var rule = getRule(rules);
-							} catch (e) {
-									console.error(e);
-									return
-							}
-							console.log(rule);
+					for(var i = 0; i < 1000; i++) {
+							var rule = getRule(rules);
 							var x1 = x * rule.a + y * rule.b + rule.e;
 							var	y1 = x * rule.c + y * rule.d + rule.f;
 							x = x1;
 							y = y1;
-							plot(x, y, rule.color);
+							plot(x, y, (usecolors ? rule.color : "forestgreen"), zfactor);
 					}
-					requestAnimationFrame(iterate);
+					requestAnimationFrame(function(){iterate(rules, counter - 1);});
 			}
 
 			function updateSettings() {
@@ -94,8 +100,9 @@
 					var rules = res[0], detcheck = res[1];
 					console.info(rules);
 					if (detcheck) {
-							console.info("REDRAW");
-							iterate(rules);
+							console.info("Redraw");
+							setupCanvas();
+							iterate(rules, 1 * document.getElementById("sn-iterruns").value);
 					} else {
 							for (var i=0; i < 4; i++) {
 									if (Math.abs(rules[i]["det"]) >= 1) {
@@ -110,6 +117,9 @@
 		<div id="container">
 			<div id="titlediv">
 				<h1>Barnsley Fern</h1>
+				<a id="back" href="index.html">
+					<img src="https://fonts.gstatic.com/s/i/materialicons/keyboard_arrow_left/v6/24px.svg" alt="Go back"/>
+				</a>
 			</div>
 			<div id="content">
 				<div id="settings-pane" class="pane">
@@ -125,9 +135,6 @@
 								\[ f_n \left(\pmatrix{x\\y}\right) := \pmatrix{a & b \\ c
 								& d} \pmatrix{x \\ y} + \pmatrix{e \\ f} \]
 								and will be applied with a probability of \(p_n\)
-								<!-- . You -->
-								<!-- can adjust \(p_n=k_n-k_{n-1}\) by adjusting the values -->
-								<!-- for \(k_n\) (in percent). -->
 							</p>
 							<table>
 								<tbody>
@@ -189,8 +196,15 @@
 										 name="usecolors">
 							<label for="usecolors">use colors</label>
 							<br/>
-							<input type="reset" style="float: right;"
-							class="danger" value="Reset options">
+							<input type="number" style="width: 6em" min="100" value="1000" step="100" id="sn-iterruns" name="iterruns">
+							<label for="iterruns">number of iterations (x1000)</label>
+							<br/>
+							<input type="number" style="width: 6em" min="20" value="70" step="10" id="s-zfactor" name="zfactor">
+							<label for="zfactor">scale factor</label>
+							<br/>
+							<input type="reset" style="float: right;" class="danger" value="reset options">
+							<input type="button" style="float: right;" class="semidanger" value="reset canvas" onclick="setupCanvas();">
+							<input type="button" style="float: right;" class="greenbox" value="draw!" onclick="updateSettings();">
 						</form>
 					</div>
 				</div>

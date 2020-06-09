@@ -2,7 +2,8 @@ html {
 		height: 100%;
 }
 body {
-		background-color: darkslategray;
+		/* background-color: darkslategray; */
+		background-color: #00294f;
 		height: 100%;
 		width: 98%;
 		margin: auto;
@@ -29,7 +30,8 @@ h1 {
 		vertical-align: top;
 }
 canvas {
-		border: 2px solid forestgreen;
+		/* border: 2px solid forestgreen; */
+		border: 4px solid #00519E;
 		width: 100%;
 		height: 100%;
 		padding: 1em;
@@ -59,7 +61,19 @@ input[type="number"].float {
 input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
 
 }
-
+#back {
+		position: absolute;
+		top: 1em;
+		left: 1em;
+		z-index: 100;
+		font-size: 150%;
+		color: white;
+		text-decoration: none;
+}
+#back img {
+		filter: invert(100%);
+		height: 1.5em;
+}
 
 #container {
 		width: 100%;
@@ -78,7 +92,8 @@ input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
 		vertical-align: top;
 		margin: 0;
 		padding: 0;
-		background-color: forestgreen;
+		/* background-color: forestgreen; */
+		background-color: #00519E;
 		border-radius: 1em;
 		color: white;
 }
@@ -113,7 +128,8 @@ input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
 #settings-pane>h2 {
 		display: block;
 		/* border: 1px solid red; */
-		background-color: forestgreen;
+		/* background-color: forestgreen; */
+		background-color: #00519E;
 		color: white;
 		border-radius: 0.65em 0.65em 0em 0em;
 		width: 100%;
@@ -137,4 +153,27 @@ input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
 		border-radius: 0.4em;
 		margin: 0.1em;
 		background-color: red;
+}
+.semidanger {
+		color: white;
+		font-weight: 900;
+		padding: 0.3em;
+		border-radius: 0.4em;
+		margin: 0.1em;
+		background-color: orange;
+}
+.greenbox {
+		color: white;
+		font-weight: 900;
+		padding: 0.3em;
+		border-radius: 0.4em;
+		margin: 0.1em;
+		background-color: green;
+}
+.whitebox {
+		background-color: white;
+		border-radius: 1em;
+		width: 100%;
+		height: 100%;
+		padding: 1em;
 }
