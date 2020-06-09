@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+					content="width=device-width,initial-scale=1.0">
+		<meta name="description" content="Iterated Function Systems and L-Systems">
+		<meta name="keywords" content="IFS,iterated,function system,
+																	 Lindenmayer System, L-system">
+		<title>Barnsley Fern</title>
+		<link rel="stylesheet" href="style.css">
+		<!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
+		<script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+		</script>
+		<script>
+			function readRules() {
+					var nrules = [{}, {}, {}, {}];
+					for (var i = 1; i < 5; i++) {
+							for (x of "abcdef") {
+									nrules[i - 1][x] = 1 * document.getElementById("s" + i + "-" + x).value;
+							}
+					}
+					var tp = 100;
+					for (var i = 1; i < 4; i++) {
+							console.log((1 * document.getElementById("s" + i + "-p").value) / 100);
+							nrules[i - 1]["p"] = (1 * document.getElementById("s" +
+																																i + "-p").value) / 100;
+							console.log(nrules[i - 1]["p"]);
+							tp -= 1 * document.getElementById("s" + i + "-p").value
+					}
+					nrules[3]["p"] = tp / 100;
+					document.getElementById("s4-p").value = tp;
+					if (nrules[3]["p"] < 0) return [nrules, "probability limit"];
+
+					var check = true;
+					for (var i = 0; i < 4; i++) {
+							var d = nrules[i]["det"] = nrules[i]["a"] * nrules[i]["d"] - nrules[i]["b"] * nrules[i]["c"];
+							if (Math.abs(d) >= 1) check = "det";
+					}
+					return [nrules, check];
+			}
+
+			function getRule(rules) {
+					var rand = Math.random();
+					// console.info(rand);
+					for(var i = 0; i < rules.length; i++) {
+							// if (rand <= rules[i]["k"]) return rules[i]
+							var rule = rules[i];
+							console.log(rule)
+							if(rand < rule.weight) {
+									return rule;
+							}
+							rand -= rule.weight;
+							console.log(rand);
+					}
+					console.error("unreachable");
+					console.info(rules);
+					return rules[3];
+			}
+
+			function plot(x, y, color) {
+					// TODO
+					var canvas = document.getElementById("canvas");
+					var	context = canvas.getContext("2d");
+					var width = canvas.width = window.innerWidth;
+					var height = canvas.height = window.innerHeight;
+					context.fillStyle = color;
+					context.fillRect(x * 350, -y * 350, 0.5, 0.5);
+			}
+
+			function iterate(rules) {
+					var x = Math.random();
+					var y = Math.random();
+					for(var i = 0; i < 100; i++) {
+							try {
+									var rule = getRule(rules);
+							} catch (e) {
+									console.error(e);
+									return
+							}
+							console.log(rule);
+							var x1 = x * rule.a + y * rule.b + rule.e;
+							var	y1 = x * rule.c + y * rule.d + rule.f;
+							x = x1;
+							y = y1;
+							plot(x, y, rule.color);
+					}
+					requestAnimationFrame(iterate);
+			}
+
+			function updateSettings() {
+					var res = readRules();
+					var rules = res[0], detcheck = res[1];
+					console.info(rules);
+					if (detcheck) {
+							console.info("REDRAW");
+							iterate(rules);
+					} else {
+							for (var i=0; i < 4; i++) {
+									if (Math.abs(rules[i]["det"]) >= 1) {
+											alert("|det f_" + (i+1) + "| is too large!");
+									}
+							}
+					}
+			}
+		</script>
+	</head>
+	<body onloadend="updateSettings();">
+		<div id="container">
+			<div id="titlediv">
+				<h1>Barnsley Fern</h1>
+			</div>
+			<div id="content">
+				<div id="settings-pane" class="pane">
+					<h2>Settings</h2>
+					<div id="settings">
+						<center>adapted from
+							<a href="http://jsbin.com/fevira/1/edit?html,js,output">
+								http://jsbin.com/fevira/1/edit?html,js,output</a></center>
+						<br/>
+						<form onchange="updateSettings();">
+							<p>
+								The functions \(f_n\) have the form
+								\[ f_n \left(\pmatrix{x\\y}\right) := \pmatrix{a & b \\ c
+								& d} \pmatrix{x \\ y} + \pmatrix{e \\ f} \]
+								and will be applied with a probability of \(p_n\)
+								<!-- . You -->
+								<!-- can adjust \(p_n=k_n-k_{n-1}\) by adjusting the values -->
+								<!-- for \(k_n\) (in percent). -->
+							</p>
+							<table>
+								<tbody>
+									<tr>
+										<th class="greyedout">\(n\)</th>
+										<th>\(p_n\)</th>
+										<th>\(a\)</th>
+										<th>\(b\)</th>
+										<th>\(c\)</th>
+										<th>\(d\)</th>
+										<th>\(e\)</th>
+										<th>\(f\)</th>
+										<!-- <th class="greyedout">\(p_n\)</th> -->
+										<!-- <th class="greyedout">\(\det f_n\)</th> -->
+									</tr>
+									<tr>
+										<td class="greyedout">1</td>
+										<td><input type="number" min="0" max="100" value="1" id="s1-p" class="int"></td>
+										<td><input type="number" value="0.0" step="0.01" id="s1-a" class="float"></td>
+										<td><input type="number" value="0.0" step="0.01" id="s1-b" class="float"></td>
+										<td><input type="number" value="0.0" step="0.01" id="s1-c" class="float"></td>
+										<td><input type="number" value="0.16" step="0.01" id="s1-d" class="float"></td>
+										<td><input type="number" value="0.0" step="0.01" id="s1-e" class="float"></td>
+										<td><input type="number" value="0.0" step="0.01" id="s1-f" class="float"></td>
+									</tr>
+									<tr>
+										<td class="greyedout">2</td>
+										<td><input type="number" min="0" max="100" value="85" id="s2-p" class="int"></td>
+										<td><input type="number" value="0.85" step="0.01" id="s2-a" class="float"></td>
+										<td><input type="number" value="0.04" step="0.01" id="s2-b" class="float"></td>
+										<td><input type="number" value="-0.04" step="0.01" id="s2-c" class="float"></td>
+										<td><input type="number" value="0.85" step="0.01" id="s2-d" class="float"></td>
+										<td><input type="number" value="0.0" step="0.01" id="s2-e" class="float"></td>
+										<td><input type="number" value="1.6" step="0.01" id="s2-f" class="float"></td>
+									</tr>
+									<tr>
+										<td class="greyedout">3</td>
+										<td><input type="number" min="0" max="100" value="7" id="s3-p" class="int"></td>
+										<td><input type="number" value="0.20" step="0.01" id="s3-a" class="float"></td>
+										<td><input type="number" value="-0.26" step="0.01" id="s3-b" class="float"></td>
+										<td><input type="number" value="0.23" step="0.01" id="s3-c" class="float"></td>
+										<td><input type="number" value="0.22" step="0.01" id="s3-d" class="float"></td>
+										<td><input type="number" value="0.0" step="0.01" id="s3-e" class="float"></td>
+										<td><input type="number" value="1.6" step="0.01" id="s3-f" class="float"></td>
+									</tr>
+									<tr>
+										<td class="greyedout">4</td>
+										<td><input type="number" min="100" max="100" value="7" id="s4-p" class="int" disabled></td>
+										<td><input type="number" value="-0.15" step="0.01" id="s4-a" class="float"></td>
+										<td><input type="number" value="0.28" step="0.01" id="s4-b" class="float"></td>
+										<td><input type="number" value="0.26" step="0.01" id="s4-c" class="float"></td>
+										<td><input type="number" value="0.24" step="0.01" id="s4-d" class="float"></td>
+										<td><input type="number" value="0.0" step="0.01" id="s4-e" class="float"></td>
+										<td><input type="number" value="0.44" step="0.01" id="s4-f" class="float"></td>
+									</tr>
+								</tbody>
+							</table>
+							<input type="checkbox" id="s-use-colors"
+										 name="usecolors">
+							<label for="usecolors">use colors</label>
+							<br/>
+							<input type="reset" style="float: right;"
+							class="danger" value="Reset options">
+						</form>
+					</div>
+				</div>
+				<div id="preview-pane" class="pane">
+					<canvas id="canvas"></canvas>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

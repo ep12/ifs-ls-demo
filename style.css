@@ -1,0 +1,140 @@
+html {
+		height: 100%;
+}
+body {
+		background-color: darkslategray;
+		height: 100%;
+		width: 98%;
+		margin: auto;
+		padding: 1em;
+		font-family: "Times New Roman", Times, serif;
+
+		box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		hyphens: auto;
+		-ms-hyphens: auto;
+		-webkit-hyphens: auto;
+		text-rendering: optimizeLegibility;
+}
+div, canvas {
+		/* border: 1px dashed gray; */
+		box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+}
+h1 {
+		width: 100%;
+		text-align: center;
+		vertical-align: top;
+}
+canvas {
+		border: 2px solid forestgreen;
+		width: 100%;
+		height: 100%;
+		padding: 1em;
+		background-color: white;
+}
+table {
+		border-collapse: collapse;
+}
+th, td {
+		padding: 0.3em;
+		border: 1px solid black;
+		margin: 0;
+}
+input {
+		background-color: transparent;
+		border: 0;
+}
+input[type="number"] {
+		transform: scale(0.8);
+}
+input[type="number"].int {
+		width: 3em;
+}
+input[type="number"].float {
+		width: 3.5em;
+}
+input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
+
+}
+
+
+#container {
+		width: 100%;
+		padding: 0px;
+		/* border: 1px solid green; */
+		height: 100%;
+		padding: 0;
+		margin: 0;
+		display: block;
+		position: relative;
+}
+#titlediv {
+		position: absolute;
+		height: 5em;
+		width: 100%;
+		vertical-align: top;
+		margin: 0;
+		padding: 0;
+		background-color: forestgreen;
+		border-radius: 1em;
+		color: white;
+}
+#content {
+		position: absolute;
+		padding-top: 6em;
+		top: 0;
+		bottom: 0;
+		width: 100%;
+}
+
+#settings-pane {
+		width: 40%;
+		float: left;
+		border-radius: 1em;
+		padding: 0em !important;
+		margin: 0em !important;
+		background-color: white;
+}
+#preview-pane {
+		width: 60%;
+		float: right;
+		padding-left: 1em;
+}
+.pane {
+		/* border: 1px solid red; */
+		display: block;
+		height: 100%;
+		min-height: 100%;/
+}
+
+#settings-pane>h2 {
+		display: block;
+		/* border: 1px solid red; */
+		background-color: forestgreen;
+		color: white;
+		border-radius: 0.65em 0.65em 0em 0em;
+		width: 100%;
+		text-align: center;
+		margin: 0;
+		padding-top: 0.5em;
+		padding-bottom: 0.5em;
+}
+#settings {
+		display: block;
+		padding: 1em;
+}
+
+.greyedout {
+		color: dimgray;
+}
+.danger {
+		color: white;
+		font-weight: 900;
+		padding: 0.3em;
+		border-radius: 0.4em;
+		margin: 0.1em;
+		background-color: red;
+}
