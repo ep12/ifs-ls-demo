@@ -74,6 +74,7 @@
 			function iterate(rules, counter) {
 					if (counter <= 0) {
 							console.info("Redraw finished");
+							document.getElementById("drawbtn").disabled = false;
 							return;
 					}
 					// if (counter % 100 == 0) {
@@ -102,6 +103,7 @@
 					if (detcheck) {
 							console.info("Redraw");
 							setupCanvas();
+							document.getElementById("drawbtn").disabled = true;
 							iterate(rules, 1 * document.getElementById("sn-iterruns").value);
 					} else {
 							for (var i=0; i < 4; i++) {
@@ -204,7 +206,7 @@
 							<br/>
 							<input type="reset" style="float: right;" class="danger" value="reset options">
 							<input type="button" style="float: right;" class="semidanger" value="reset canvas" onclick="setupCanvas();">
-							<input type="button" style="float: right;" class="greenbox" value="draw!" onclick="updateSettings();">
+							<input type="button" style="float: right;" class="greenbox" value="draw!" onclick="updateSettings();" id="drawbtn">
 						</form>
 					</div>
 				</div>
