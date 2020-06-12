@@ -115,7 +115,7 @@
 			}
 		</script>
 	</head>
-	<body onloadend="updateSettings();">
+	<body onload="updateSettings();">
 		<div id="container">
 			<div id="titlediv">
 				<h1>Barnsley Fern</h1>
@@ -153,7 +153,7 @@
 										<!-- <th class="greyedout">\(\det f_n\)</th> -->
 									</tr>
 									<tr>
-										<td class="greyedout">1</td>
+										<td style="color: red">1</td>
 										<td><input type="number" min="0" max="100" value="1" id="s1-p" class="int"></td>
 										<td><input type="number" value="0.0" step="0.01" id="s1-a" class="float"></td>
 										<td><input type="number" value="0.0" step="0.01" id="s1-b" class="float"></td>
@@ -163,7 +163,7 @@
 										<td><input type="number" value="0.0" step="0.01" id="s1-f" class="float"></td>
 									</tr>
 									<tr>
-										<td class="greyedout">2</td>
+										<td style="color: green">2</td>
 										<td><input type="number" min="0" max="100" value="85" id="s2-p" class="int"></td>
 										<td><input type="number" value="0.85" step="0.01" id="s2-a" class="float"></td>
 										<td><input type="number" value="0.04" step="0.01" id="s2-b" class="float"></td>
@@ -173,7 +173,7 @@
 										<td><input type="number" value="1.6" step="0.01" id="s2-f" class="float"></td>
 									</tr>
 									<tr>
-										<td class="greyedout">3</td>
+										<td style="color: blue">3</td>
 										<td><input type="number" min="0" max="100" value="7" id="s3-p" class="int"></td>
 										<td><input type="number" value="0.20" step="0.01" id="s3-a" class="float"></td>
 										<td><input type="number" value="-0.26" step="0.01" id="s3-b" class="float"></td>
@@ -183,7 +183,7 @@
 										<td><input type="number" value="1.6" step="0.01" id="s3-f" class="float"></td>
 									</tr>
 									<tr>
-										<td class="greyedout">4</td>
+										<td style="color: purple">4</td>
 										<td><input type="number" min="100" max="100" value="7" id="s4-p" class="int" disabled></td>
 										<td><input type="number" value="-0.15" step="0.01" id="s4-a" class="float"></td>
 										<td><input type="number" value="0.28" step="0.01" id="s4-b" class="float"></td>
@@ -204,7 +204,7 @@
 							<input type="number" style="width: 6em" min="20" value="70" step="10" id="s-zfactor" name="zfactor">
 							<label for="zfactor">scale factor</label>
 							<br/>
-							<input type="reset" style="float: right;" class="danger" value="reset options">
+							<input type="reset" style="float: right;" class="danger" value="reset options" onclick="updateSettings();">
 							<input type="button" style="float: right;" class="semidanger" value="reset canvas" onclick="setupCanvas();">
 							<input type="button" style="float: right;" class="greenbox" value="draw!" onclick="updateSettings();" id="drawbtn">
 						</form>
