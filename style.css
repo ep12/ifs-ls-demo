@@ -29,6 +29,17 @@ h1 {
 		text-align: center;
 		vertical-align: top;
 }
+code {
+		background-color: rgba(0, 0, 0, 0.2);
+		padding: 0.05em 0.2em;
+		margin: 0;
+}
+code.block {
+		display: block;
+		width: 100% !important;
+		margin: 0.5em 0 0.5em 0 !important;
+		padding: 0.5em !important;
+}
 canvas {
 		/* border: 2px solid forestgreen; */
 		border: 4px solid #00519E;
@@ -37,6 +48,47 @@ canvas {
 		padding: 1em;
 		background-color: white;
 }
+.hfill {
+		height: 100% !important;
+		width: 100% !important;
+		display: block;
+}
+.hsixtenth {
+		height: 60% !important;
+}
+.whitescrollbox {
+		border: 4px solid #00519E;
+		background-color: white;
+		overflow-y: scroll;
+		overflow-x: auto;
+		padding: 1em;
+}
+.scroll {
+		overflow-y: scroll;
+		overflow-x: auto;
+}
+.autoscroll {
+		overflow-y: auto;
+		overflow-x: auto;
+}
+
+.flex-container {
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+}
+.flex-shrinkgrow {
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: 40%;
+}
+.topmargin {
+		margin-top: 1em;
+}
+
 table {
 		border-collapse: collapse;
 }
@@ -59,7 +111,6 @@ input[type="number"].float {
 		width: 3.5em;
 }
 input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
-
 }
 #back {
 		position: absolute;
@@ -179,4 +230,10 @@ input::-webkit-inner-spin-button, input::-webkit-outer-spin-button {
 }
 input[type="button"]:disabled, input[type="button"][disabled] {
 		background-color: gray !important;
+}
+
+textarea {
+		width: 100%;
+		border: 1px solid black;
+		resize: vertical;
 }

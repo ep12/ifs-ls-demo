@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport"
+					content="width=device-width,initial-scale=1.0">
+		<meta name="description" content="Iterated Function Systems and L-Systems">
+		<meta name="keywords" content="IFS,iterated,function system,
+																	 Lindenmayer System, L-system">
+		<title>L Systems</title>
+		<link rel="stylesheet" href="style.css">
+		<!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
+		<script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+		</script>
+		<script src="ls-parser.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="titlediv">
+				<h1>L-Systems: Turtle-Visualisation</h1>
+				<a id="back" href="index.html">
+					<img src="https://fonts.gstatic.com/s/i/materialicons/keyboard_arrow_left/v6/24px.svg" alt="Go back"/>
+				</a>
+			</div>
+			<div id="content">
+				<div id="settings-pane" class="pane">
+					<h2>Settings</h2>
+					<div id="settings" class="autoscroll">
+						<form>
+							<!-- onchange="updateSettings();" -->
+							<label for="grammar">Grammar definitions:</label>
+							<textarea type="text" id="sgrammar" name="grammar" placeholder="Grammar definitions" style="min-height: 10em;">
+F: draw_forward{10}
+G: draw_forward{10}
+L: turn_left{60}
+R: turn_right{60}
+							</textarea>
+							<br/>
+							<label for="axiom">Axiom:</label>
+							<textarea id="saxiom" name="axiom" placeholder="Axiom">F</textarea>
+							<br/>
+							<label for="reprules">Replacement rules:</label>
+							<textarea id="srules" name="reprules">F: FLFRRFLF</textarea>
+							<input type="number" style="width: 5em" min="0" value="0" step="1" id="sn-iterruns" name="iterruns">
+							<label for="iterruns">Number of iterations</label>
+							<br/>
+							<input type="number" style="width: 6em" min="20" value="70" step="10" id="s-zfactor" name="zfactor">
+							<label for="zfactor">Scale factor</label>
+							<br/>
+							<input type="reset" style="float: right;" class="danger" value="reset options" onclick="updateSettings();">
+							<input type="button" style="float: right;" class="semidanger" value="reset canvas" onclick="setupCanvas();">
+							<input type="button" style="float: right;" class="greenbox" value="draw!" onclick="updateSettings();" id="drawbtn">
+						</form>
+						<br/>
+						<br/>
+						<table id="wordlengths-table">
+						</table>
+					</div>
+				</div>
+				<div id="preview-pane" class="pane">
+					<div class="flex-container">
+						<canvas id="canvas" class="hsixtenth"></canvas>
+						<div class="flex-shrinkgrow whitescrollbox topmargin">
+							<p id="helpbox">
+								<h3><u>Help</u></h3>
+								This pane will help you understand the settings in the left pane.
+								<h4>Grammar &amp; Turtle commands</h4>
+								Here you can define the <var>actions</var> associated with a <var>letter</var>:<br/>
+								<code class="block">
+									<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
+									<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
+									...
+								</code>
+								<var>Letter</var> is a single character, followed by a colon. The allowed <var>action</var>s are the following:
+								<ul>
+									<li><code>draw_forward{length}</code>: Move the turtle foward while drawing a line</li>
+									<li><code>turn_left{angle}</code>: Turn the turtle <var>angle</var> degrees to the left</li>
+									<li><code>turn_right{angle}</code>: Turn the turtle <var>angle</var> degrees to the right</li>
+									<!-- TODO -->
+								</ul>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="ls-canvas.js"></script>
+	</body>
+</html>
