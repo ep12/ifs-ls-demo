@@ -26,27 +26,30 @@
 			<div id="content">
 				<div id="settings-pane" class="pane">
 					<h2>Settings</h2>
-					<div id="settings" class="autoscroll">
+					<div id="settings" class="scroll">
 						<form>
 							<!-- onchange="updateSettings();" -->
 							<label for="grammar">Grammar definitions:</label>
 							<textarea type="text" id="sgrammar" name="grammar" placeholder="Grammar definitions" style="min-height: 10em;">
+w: set_linewidth{this.iteration}
 F: draw_forward{10}
 G: draw_forward{10}
 L: turn_left{60}
 R: turn_right{60}
-							</textarea>
+r: turn_right{120}</textarea>
 							<br/>
 							<label for="axiom">Axiom:</label>
-							<textarea id="saxiom" name="axiom" placeholder="Axiom">F</textarea>
+							<textarea id="saxiom" name="axiom" placeholder="Axiom">wF</textarea>
 							<br/>
 							<label for="reprules">Replacement rules:</label>
 							<textarea id="srules" name="reprules">F: FLFRRFLF</textarea>
-							<input type="number" style="width: 5em" min="0" value="0" step="1" id="sn-iterruns" name="iterruns">
-							<label for="iterruns">Number of iterations</label>
+							<input type="number" style="width: 5em" min="0" value="0" step="1" id="sn-iterruns" name="iterruns" onchange="updateSettings();">
+							<label for="iterruns">Number of iterations (caution!)</label>
 							<br/>
-							<input type="number" style="width: 6em" min="20" value="70" step="10" id="s-zfactor" name="zfactor">
-							<label for="zfactor">Scale factor</label>
+							<input type="checkbox" name="animate" id="sanimate" checked="true">
+							<label for="animate">Animate (slower)</label>
+							<!-- <input type="number" style="width: 6em" min="20" value="70" step="10" id="s-zfactor" name="zfactor"> -->
+							<!-- <label for="zfactor">Scale factor</label> -->
 							<br/>
 							<input type="reset" style="float: right;" class="danger" value="reset options" onclick="updateSettings();">
 							<input type="button" style="float: right;" class="semidanger" value="reset canvas" onclick="setupCanvas();">
@@ -66,7 +69,7 @@ R: turn_right{60}
 								<h3><u>Help</u></h3>
 								This pane will help you understand the settings in the left pane.
 								<h4>Grammar &amp; Turtle commands</h4>
-								Here you can define the <var>actions</var> associated with a <var>letter</var>:<br/>
+								Here you can define the <var>actions</var> associated with a <var>letter</var> that can be used to produce pretty images:<br/>
 								<code class="block">
 									<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
 									<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
@@ -77,8 +80,37 @@ R: turn_right{60}
 									<li><code>draw_forward{length}</code>: Move the turtle foward while drawing a line</li>
 									<li><code>turn_left{angle}</code>: Turn the turtle <var>angle</var> degrees to the left</li>
 									<li><code>turn_right{angle}</code>: Turn the turtle <var>angle</var> degrees to the right</li>
+									<li><code>no_operation</code>: Do nothing</li>
+									<li><code>set_color{color}</code> changes the stroke color to <var>color</var></li>
+									<li><code>set_linewidth{width}</code> sets the linewidth of the segments.
+										<code>x: set_linewidth{this.iteration}</code> will increase the line width with every iteration a bit because
+										the final image is often scaled down. Do not forget to add <code>x</code> to your axiom!</li>
 									<!-- TODO -->
 								</ul>
+
+								<h4>Axiom</h4>
+								<p>
+									The axiom is the starting point. From there the application of replacement rules will hopefully lead you to some
+									amazing fractals!
+								</p>
+
+								<h4>Replacement Rules</h4>
+								The core of an L system is the set of replacement rules that determine the changes when iterating.
+								A rule consists of two parts:
+								<ol>
+									<li>A letter to replace.</li>
+									<li>A word (sequence of letters) to replace the letter with.</li>
+								</ol>
+								Similar to the syntax you already know from the grammar definition, you can simply define replacement rules like this:
+								<code class="block">
+									<var>&lt;letter a&gt;</var>: <var>&lt;letter a1&gt;</var><var>&lt;letter 2&gt;</var><var>&lt;letter a3&gt;</var>...<br/>
+									<var>&lt;letter b&gt;</var>: <var>&lt;letter b1&gt;</var><var>&lt;letter b2&gt;</var>...<br/>
+								</code>
+								E. g.:
+								<code class="block">
+									F: GFLFRRFFLLFRFG<br/>
+									G: GG<br/>
+								</code>
 							</p>
 						</div>
 					</div>

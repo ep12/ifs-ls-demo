@@ -39,8 +39,8 @@ function CanvasWrapper(id, targetWidth = null, targetHeight = null) {
 															(-event.x + this.dragStartX) / this.currentScaleFactor,
 															(-event.y + this.dragStartY) / this.currentScaleFactor));
 				if (this.redrawHandler != null) {
-						this.clear();
-						this.redrawHandler();
+						// this.clear();
+						// this.redrawHandler();
 				}
 		}
 		this.dragEndHandler = function(event) {
@@ -48,8 +48,8 @@ function CanvasWrapper(id, targetWidth = null, targetHeight = null) {
 															(-event.x + this.dragStartX) / this.currentScaleFactor,
 															(-event.y + this.dragStartY) / this.currentScaleFactor));
 				if (this.redrawHandler != null) {
-						this.clear();
-						this.redrawHandler();
+						// this.clear();
+						// this.redrawHandler();
 				}
 				console.log(event.x, event.y, this.redrawHandler);
 				this.dragStartX = null;
@@ -57,9 +57,9 @@ function CanvasWrapper(id, targetWidth = null, targetHeight = null) {
 				this.dragStartBBox = null;
 		}
 
-		this.canvas.addEventListener("mousedown", this.dragStartHandler.bind(this));
-		this.canvas.addEventListener("mousemove", this.dragHandler.bind(this));
-		this.canvas.addEventListener("mouseup", this.dragEndHandler.bind(this));
+		// this.canvas.addEventListener("mousedown", this.dragStartHandler.bind(this));
+		// this.canvas.addEventListener("mousemove", this.dragHandler.bind(this));
+		// this.canvas.addEventListener("mouseup", this.dragEndHandler.bind(this));
 
 		this.onScreenWidth = function(inner) {
 				var cstyle = window.getComputedStyle(this.canvas);
@@ -97,7 +97,7 @@ function CanvasWrapper(id, targetWidth = null, targetHeight = null) {
 				var bb = resizeBBox(bbox, 1);
 				this.ctx.strokeRect(bb.x1, bb.y1, bb.width, bb.height);
 		}
-		this.clear = function(scale=2) {
+		this.clear = function(scale=5) {
 				var bbox = (this.currentBBox != null) ? resizeBBox(this.currentBBox, scale) : this.boundingBox(scale);
 				this.ctx.clearRect(bbox.x1, bbox.y1, bbox.width, bbox.height);
 		}
@@ -109,6 +109,7 @@ function CanvasWrapper(id, targetWidth = null, targetHeight = null) {
 		}
 
 		this.drawLine = function(x1, y1, x2, y2, strokeStyle="black", lineWidth=1) {
+				this.ctx.beginPath();
 				this.ctx.moveTo(x1, y1);
 				this.ctx.strokeStyle = strokeStyle;
 				this.ctx.lineWidth = lineWidth;
@@ -127,7 +128,6 @@ function CanvasWrapper(id, targetWidth = null, targetHeight = null) {
 				if (typeof(bbox) == "number") {
 						bbox = this.boundingBox(bbox); // scale
 				}
-				// TODO: clear
 				this.clear();
 				var bb = this.currentBBox = resizeBBox(bbox, scale);
 				var s = this.currentScaleFactor = this.getScaleFactor(bb.width, bb.height);
@@ -137,15 +137,15 @@ function CanvasWrapper(id, targetWidth = null, targetHeight = null) {
 }
 
 var c = new CanvasWrapper("canvas", null, 0.5);
-var xc = 0, yc = 00, w=100, h=100;
-c.resizeCanvas();
-c.setView({"xcenter": xc, "ycenter": yc, "width": w, "height": h})
-c.redrawHandler = function(){
-		// c.drawLine(xc-1, yc-1, xc+1, yc+1, "red");
-		// c.drawLine(xc-101, yc+99, xc-99, yc+101, "green");
-		c.ctx.strokeRect(xc-w/2, yc-h/2, w, h);
-		c.ctx.strokeRect(xc-10, yc-10, 20, 20);
-}
+// var xc = 0, yc = 00, w=100, h=100;
+// c.resizeCanvas();
+// c.setView({"xcenter": xc, "ycenter": yc, "width": w, "height": h})
+// c.redrawHandler = function(){
+// 		// c.drawLine(xc-1, yc-1, xc+1, yc+1, "red");
+// 		// c.drawLine(xc-101, yc+99, xc-99, yc+101, "green");
+// 		c.ctx.strokeRect(xc-w/2, yc-h/2, w, h);
+// 		c.ctx.strokeRect(xc-10, yc-10, 20, 20);
+// }
 
 window.addEventListener('resize', c.resizeCanvas.bind(c));
 
@@ -170,6 +170,7 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 		this.color = "black";
 		this.lineWidth = 1;
 		this.dryRun = true;
+		this.savedStates = []; // TODO
 
 		this.reset = function() {
 				this.x = 0; this.y = 0; this.phi = this.phi0;
@@ -226,6 +227,14 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 				var angDeg = scopeEval(this, par);
 				this.phi = this.phi + angDeg * Math.PI / 180;
 		}
+		this.no_operation = function(par) {};
+		this.set_color = function(par) {
+				this.color = scopeEval(this, par);
+		}
+		this.set_linewidth = function(par) {
+				this.lineWidth = scopeEval(this, par);
+				console.log(par, scopeEval(this, par), this);
+		}
 
 		this.runStep = function(instruction, par, macroLetter, macroLetterIndex) {
 				if (!this.hasOwnProperty(instruction)) {
@@ -252,6 +261,7 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 				return 0;
 		}
 		this.run = function(word) {
+				document.getElementById("drawbtn").disabled = true;
 				for (var i=0; i < word.length; i++) {
 						l = word[i];
 						var res = this.runMacro(l);
@@ -260,10 +270,14 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 								return 1;
 						}
 				}
+				document.getElementById("drawbtn").disabled = false;
 				return 0;
 		}
 		this.animate = function(word) {
-				if (word.length == 0) return;
+				if (word.length == 0) {
+						document.getElementById("drawbtn").disabled = false;
+						return
+				}
 				l = word[0];
 				var res = this.runMacro(l);
 				if (res > 0) {
@@ -278,9 +292,11 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 
 		this.doTheJob = function(word, animate=true) {
 				this.reset();
+				this.canvas.clear();
 				this.run(word);
 				var bb = this.boundingBox();
 				this.canvas.setView(bb, true, 1.1);
+				this.canvas.clear();
 				// this.canvas.drawBBox(bb);
 				this.reset();
 				this.dryRun = false;
@@ -307,12 +323,16 @@ var turtle = new Turtle(c, {"F": [["draw_forward", "100"]], "L": [["turn_left", 
 
 function setupCanvas() {
 		console.log("Setting up canvas");
+		c.clear();
 }
 
 function updateSettings() {
+		document.getElementById("drawbtn").disabled = true;
+		var animate = document.getElementById("sanimate").checked;
+
 		console.clear();
 		c.resizeCanvas();
-		c.clear();
+		// c.clear();
 		console.info("Updating settings");
 		var grammar = parseGrammar();
 		var alphabet = Object.keys(grammar);
@@ -337,11 +357,6 @@ function updateSettings() {
 
 		var turtle = new Turtle(c, grammar, 0, 0);
 		turtle.iteration = niterations
-		turtle.doTheJob(doReplacement(axiom, rules, niterations), false);
+		turtle.doTheJob(doReplacement(axiom, rules, niterations), animate);
 		console.log(c.currentBBox);
-		// var xmin = finalstate["xmin"], xmax = finalstate["xmax"], ymin = finalstate["ymin"], ymax = finalstate["ymax"];
-		// var xc = (xmax + xmin) / 2, xhw = (xmax - xmin) / 2, yc = (ymax + ymin) / 2, yhw = (ymax - ymin) / 2;
-		// var canvas = document.getElementById("canvas");
-		// var	context = canvas.getContext("2d");
-		// context.setTransform(1, 0, 0, 1, xmin, ymin); // TODO: scaling
 }

@@ -28,7 +28,7 @@ function parseGrammar() {
 				if (lm.length < 3) {warnings.push(`Could not parse grammar line ${i+1}: "${l}" (js fault?)`); continue}
 				var letter = lm[1];
 				if (grammar.hasOwnProperty(letter)) warnings.push(`Multiple definitions for "${letter}": always using the last one!`);
-				var expression = lm[2].split(';');
+				var expression = lm[2].split(';').map(x => x.trim()).filter(x => x.length > 0);
 				var exprparts = [];
 				for (j = 0; j < expression.length; j++) {
 						var atom = expression[j].trim();
