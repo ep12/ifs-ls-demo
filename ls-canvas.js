@@ -1,3 +1,15 @@
+Math.rand = function(a=0, b=1) {return a + (b - a) * Math.random()};
+
+// adapted from https://stackoverflow.com/a/49434653
+Math.randStdNorm = function() {
+    let u = 0, v = 0;
+    while(u === 0) u = Math.random(); //Converting [0,1) to (0,1)
+    while(v === 0) v = Math.random();
+    let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    return num;
+};
+Math.randNorm = function(mean, std) {return mean + std * Math.randStdNorm()};
+
 function resizeBBox(bbox, scale) {
 		var xc = bbox.xcenter, yc = bbox.ycenter, w = bbox.width, h = bbox.height;
 		return {"xcenter": xc, "ycenter": yc, "width": scale * w, "height": scale * h,
@@ -205,6 +217,10 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 				console.error(msg);
 				alert(msg);
 		}
+		this.checkNumbers = function () {
+				return [this.x, this.y, this.phi].every(Number.isFinite);
+		}
+		// -----------
 
 		this.draw_forward = function(l) {
 				var length = scopeEval(this, l);
@@ -227,6 +243,10 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 				var angDeg = scopeEval(this, par);
 				this.phi = this.phi + angDeg * Math.PI / 180;
 		}
+		this.set_direction = function(par) {
+				var angDeg = scopeEval(this, par);
+				this.phi = -angDeg * Math.PI / 180;
+		}
 		this.no_operation = function(par) {};
 		this.set_color = function(par) {
 				this.color = scopeEval(this, par);
@@ -235,15 +255,34 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 				this.lineWidth = scopeEval(this, par);
 				console.log(par, scopeEval(this, par), this);
 		}
+		this.save_state = function(par) {
+				this.savedStates.push(this.state());
+		}
+		this.restore_state = function(par) {
+				// do sth. with par?
+				var s = this.savedStates.pop();
+				if (s === undefined) {
+						this.error("Could not pop state");
+						return 1
+				}
+				Object.keys(s).forEach(x => this[x] = s[x]);
+		}
+
+
+		// -----------------------------------------------------------------------
 
 		this.runStep = function(instruction, par, macroLetter, macroLetterIndex) {
 				if (!this.hasOwnProperty(instruction)) {
 						this.error(`Turtle does not know what you mean with "${instruction}" (macro "${macroLetter}", instruction ${macroLetterIndex+1})`);
 						return 1;
 				}
-				this[instruction].bind(this)(par); // JS :P
-				// console.debug(this.state());
-				return 0;
+				var res = this[instruction].bind(this)(par); // JS :P
+				if (!this.checkNumbers()) {
+						var s = this.state();
+						this.error(`Error: macro "${macroLetter}", instruction ${macroLetterIndex+1} ("${instruction}"), argument ${par}:\nnon-numeric state:\n${s}`);
+						return 1;
+				}
+				return res;
 		}
 		this.runMacro = function(macroLetter) {
 				if (!this.grammar.hasOwnProperty(macroLetter)) {
@@ -256,7 +295,7 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 						var instruction = actionspec[0];
 						var parameter = actionspec[1];
 						var res = this.runStep(instruction, parameter, macroLetter, ai);
-						if (res > 0) return res;
+						if (res == 1) return res;
 				}
 				return 0;
 		}
@@ -267,6 +306,7 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 						var res = this.runMacro(l);
 						if (res > 0) {
 								alert("Errors occurred and therefore the execution was stopped.");
+								document.getElementById("drawbtn").disabled = false;
 								return 1;
 						}
 				}
@@ -282,6 +322,7 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 				var res = this.runMacro(l);
 				if (res > 0) {
 						alert("Errors occurred and therefore the execution was stopped.");
+						document.getElementById("drawbtn").disabled = false;
 						return 1;
 				}
 				var f = function () {
@@ -290,12 +331,12 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 				requestAnimationFrame(f.bind(this));
 		}
 
-		this.doTheJob = function(word, animate=true) {
+		this.doTheJob = function(word, animate=true, scale=1.5) {
 				this.reset();
 				this.canvas.clear();
 				this.run(word);
 				var bb = this.boundingBox();
-				this.canvas.setView(bb, true, 1.1);
+				this.canvas.setView(bb, true, scale);
 				this.canvas.clear();
 				// this.canvas.drawBBox(bb);
 				this.reset();
@@ -327,12 +368,12 @@ function setupCanvas() {
 }
 
 function updateSettings() {
+		console.clear();
+
 		document.getElementById("drawbtn").disabled = true;
 		var animate = document.getElementById("sanimate").checked;
 
-		console.clear();
 		c.resizeCanvas();
-		// c.clear();
 		console.info("Updating settings");
 		var grammar = parseGrammar();
 		var alphabet = Object.keys(grammar);
@@ -349,14 +390,18 @@ function updateSettings() {
 		console.info("Rules:", rules);
 
 		var niterations = 1 * document.getElementById("sn-iterruns").value;
+		var scale = 1 * document.getElementById("ssfactor").value;
 		console.info("Number of iterations:", niterations);
 		for (i=0; i<=niterations; i++) {
 				console.info(doReplacement(axiom, rules, i).length);
 		};
-		makeWordlengthTable(axiom, rules, niterations);
+		// TEMP: This table gets very long...
+		// makeWordlengthTable(axiom, rules, niterations);
 
-		var turtle = new Turtle(c, grammar, 0, 0);
+		// var turtle = new Turtle(c, grammar, 0, 0);
+		turtle.reset();
 		turtle.iteration = niterations
-		turtle.doTheJob(doReplacement(axiom, rules, niterations), animate);
+		turtle.grammar = grammar;
+		turtle.doTheJob(doReplacement(axiom, rules, niterations), animate, scale);
 		console.log(c.currentBBox);
 }

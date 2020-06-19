@@ -11,7 +11,7 @@ function handleWarnings(warnings) {
 function parseGrammar() {
 		console.info("Parsing grammar");
 		var gform = document.getElementById("sgrammar");
-		var rawlines = gform.value.trim().split('\n').map(x => x.trim()).filter(x => x.length > 0);
+		var rawlines = gform.value.trim().split('\n').map(x => x.trim()).filter(x => x.length > 0 && x.slice(0, 2) != ";;");
 		var grammar = {};
 		var lineRe = /^(.)\s*:\s*(.+)\s*$/;
 		var exprRe = /^([^{]+)(?:\{(.+)\})?$/;

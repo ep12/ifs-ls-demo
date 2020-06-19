@@ -30,27 +30,34 @@
 						<form>
 							<!-- onchange="updateSettings();" -->
 							<label for="grammar">Grammar definitions:</label>
-							<textarea type="text" id="sgrammar" name="grammar" placeholder="Grammar definitions" style="min-height: 10em;">
-w: set_linewidth{this.iteration}
-F: draw_forward{10}
-G: draw_forward{10}
+							<textarea type="text" id="sgrammar" name="grammar" placeholder="Grammar definitions" style="min-height: 17em;">
+;; The line below can be used to set the initial direction
+;; and the line width depending on the current iteration
+0: set_linewidth{this.iteration}; set_direction{0}
+
+;; The main definitions:
+F: draw_forward{50}
+G: draw_forward{50}
 L: turn_left{60}
 R: turn_right{60}
-r: turn_right{120}</textarea>
+r: turn_right{120}
+;; Note that r and R are different! The alphabet is case-sensitive!</textarea>
 							<br/>
 							<label for="axiom">Axiom:</label>
-							<textarea id="saxiom" name="axiom" placeholder="Axiom">wF</textarea>
+							<textarea id="saxiom" name="axiom" placeholder="Axiom">0F</textarea>
 							<br/>
 							<label for="reprules">Replacement rules:</label>
 							<textarea id="srules" name="reprules">F: FLFRRFLF</textarea>
-							<input type="number" style="width: 5em" min="0" value="0" step="1" id="sn-iterruns" name="iterruns" onchange="updateSettings();">
-							<label for="iterruns">Number of iterations (caution!)</label>
+							<span class="iteration-highlight">
+								<input type="number" style="width: 5em" min="0" value="0" step="1" id="sn-iterruns" name="iterruns" onchange="updateSettings();">
+								<label for="iterruns">Number of iterations</label>
+							</span>
+							<input type="number" style="width: 5em" min="1" value="1.5" step="0.1" id="ssfactor" name="zfactor">
+							<label for="zfactor">Scale factor</label>
 							<br/>
 							<input type="checkbox" name="animate" id="sanimate" checked="true">
 							<label for="animate">Animate (slower)</label>
-							<!-- <input type="number" style="width: 6em" min="20" value="70" step="10" id="s-zfactor" name="zfactor"> -->
-							<!-- <label for="zfactor">Scale factor</label> -->
-							<br/>
+							<!-- <br/> -->
 							<input type="reset" style="float: right;" class="danger" value="reset options" onclick="updateSettings();">
 							<input type="button" style="float: right;" class="semidanger" value="reset canvas" onclick="setupCanvas();">
 							<input type="button" style="float: right;" class="greenbox" value="draw!" onclick="updateSettings();" id="drawbtn">
@@ -65,52 +72,62 @@ r: turn_right{120}</textarea>
 					<div class="flex-container">
 						<canvas id="canvas" class="hsixtenth"></canvas>
 						<div class="flex-shrinkgrow whitescrollbox topmargin">
-							<p id="helpbox">
+							<div id="helpbox">
 								<h3><u>Help</u></h3>
 								This pane will help you understand the settings in the left pane.
 								<h4>Grammar &amp; Turtle commands</h4>
-								Here you can define the <var>actions</var> associated with a <var>letter</var> that can be used to produce pretty images:<br/>
-								<code class="block">
-									<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
-									<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
-									...
-								</code>
-								<var>Letter</var> is a single character, followed by a colon. The allowed <var>action</var>s are the following:
-								<ul>
-									<li><code>draw_forward{length}</code>: Move the turtle foward while drawing a line</li>
-									<li><code>turn_left{angle}</code>: Turn the turtle <var>angle</var> degrees to the left</li>
-									<li><code>turn_right{angle}</code>: Turn the turtle <var>angle</var> degrees to the right</li>
-									<li><code>no_operation</code>: Do nothing</li>
-									<li><code>set_color{color}</code> changes the stroke color to <var>color</var></li>
-									<li><code>set_linewidth{width}</code> sets the linewidth of the segments.
-										<code>x: set_linewidth{this.iteration}</code> will increase the line width with every iteration a bit because
-										the final image is often scaled down. Do not forget to add <code>x</code> to your axiom!</li>
-									<!-- TODO -->
-								</ul>
+								<p class="indent">
+									Here you can define the <var>actions</var> associated with a <var>letter</var> that can be used to produce pretty images:<br/>
+									<code class="block">
+										<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
+										<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
+										<b>;;</b> A comment line starts with two semicolons. Inline comments are not allowed.<br/>
+										...
+									</code>
+									<var>Letter</var> is a single character, followed by a colon. The allowed <var>action</var>s are the following:
+									<ul>
+										<li><code>draw_forward{length}</code>: Move the turtle foward while drawing a line</li>
+										<li><code>jump_forward{length}</code>: Move the turtle foward without drawing a line</li>
+										<li><code>turn_left{angle}</code>: Turn the turtle <var>angle</var> degrees to the left</li>
+										<li><code>turn_right{angle}</code>: Turn the turtle <var>angle</var> degrees to the right</li>
+										<li><code>set_direction{angle}</code>: Set the direction to <var>angle</var></li>
+										<li><code>no_operation</code>: Do nothing</li>
+										<li><code>set_color{color}</code> changes the stroke color to <var>color</var></li>
+										<li><code>set_linewidth{width}</code> sets the linewidth of the segments.
+											<code>x: set_linewidth{this.iteration}</code> will increase the line width with every iteration a bit because
+											the final image is often scaled down. Do not forget to add <code>x</code> to your axiom!</li>
+										<!-- TODO -->
+									</ul>
+								</p>
 
 								<h4>Axiom</h4>
-								<p>
+								<p class="indent">
 									The axiom is the starting point. From there the application of replacement rules will hopefully lead you to some
 									amazing fractals!
 								</p>
 
 								<h4>Replacement Rules</h4>
-								The core of an L system is the set of replacement rules that determine the changes when iterating.
-								A rule consists of two parts:
+								<p class="indent">
+									The core of an L system is the set of replacement rules that determine the changes when iterating.
+									A rule consists of two parts:
+								</p>
 								<ol>
 									<li>A letter to replace.</li>
 									<li>A word (sequence of letters) to replace the letter with.</li>
 								</ol>
-								Similar to the syntax you already know from the grammar definition, you can simply define replacement rules like this:
-								<code class="block">
-									<var>&lt;letter a&gt;</var>: <var>&lt;letter a1&gt;</var><var>&lt;letter 2&gt;</var><var>&lt;letter a3&gt;</var>...<br/>
-									<var>&lt;letter b&gt;</var>: <var>&lt;letter b1&gt;</var><var>&lt;letter b2&gt;</var>...<br/>
-								</code>
-								E. g.:
-								<code class="block">
-									F: GFLFRRFFLLFRFG<br/>
-									G: GG<br/>
-								</code>
+								<p class="indent">
+									Similar to the syntax you already know from the grammar definition, you can simply define replacement rules like this:
+									<code class="block">
+										<var>&lt;letter a&gt;</var>: <var>&lt;letter a1&gt;</var><var>&lt;letter 2&gt;</var><var>&lt;letter a3&gt;</var>...<br/>
+										<var>&lt;letter b&gt;</var>: <var>&lt;letter b1&gt;</var><var>&lt;letter b2&gt;</var>...<br/>
+									</code>
+									E. g.:
+									<code class="block">
+										F: GFLFRRFFLLFRFG<br/>
+										G: GG<br/>
+									</code>
+									<i>Note that comments are not allowed!</i>
+								</p>
 							</p>
 						</div>
 					</div>
