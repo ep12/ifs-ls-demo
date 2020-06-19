@@ -7,21 +7,129 @@
 		<meta name="description" content="Iterated Function Systems and L-Systems">
 		<meta name="keywords" content="IFS,iterated,function system,
 																	 Lindenmayer System, L-system">
+		<meta name="theme-color" content="#00519e" />
 		<title>Barnsley Fern</title>
+		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+		<script src="draggable-canvas.js"></script>
 		<link rel="stylesheet" href="style.css">
-		<!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
-		<script id="MathJax-script" async
-          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-		</script>
+		<link rel="stylesheet" href="fern-style.css">
+	</head>
+	<body>
+		<header>
+			<h1>Barnsley-Fern</h1>
+			<a href="index.html" id="back">
+				<img src="https://fonts.gstatic.com/s/i/materialicons/keyboard_arrow_left/v6/24px.svg" alt="Go back"/>
+			</a>
+		</header>
+		<main>
+			<div id="pane-settings" class="pane">
+				<div class="pane-title"><h2>Settings</h2></div>
+				<div class="pane-content scrollable-y">
+					<center>adapted from
+						<a href="http://jsbin.com/fevira/1/edit?html,js,output">
+							http://jsbin.com/fevira/1/edit?html,js,output</a></center>
+					<br/>
+					<form onchange="updateSettings();">
+						<p>
+							The functions \(f_n\) have the form
+							\[ f_n \left(\pmatrix{x\\y}\right) := \pmatrix{a & b \\ c
+							& d} \pmatrix{x \\ y} + \pmatrix{e \\ f} \]
+							and will be applied with a probability of \(p_n\)
+						</p>
+						<table>
+							<tbody>
+								<tr>
+									<th class="greyedout">\(n\)</th>
+									<th>\(p_n\)</th>
+									<th>\(a\)</th>
+									<th>\(b\)</th>
+									<th>\(c\)</th>
+									<th>\(d\)</th>
+									<th>\(e\)</th>
+									<th>\(f\)</th>
+									<!-- <th class="greyedout">\(p_n\)</th> -->
+									<!-- <th class="greyedout">\(\det f_n\)</th> -->
+								</tr>
+								<tr>
+									<td style="color: red">1</td>
+									<td><input type="number" min="0" max="100" value="1" id="s1-p" class="int"></td>
+									<td><input type="number" value="0.0" step="0.01" id="s1-a" class="float"></td>
+									<td><input type="number" value="0.0" step="0.01" id="s1-b" class="float"></td>
+									<td><input type="number" value="0.0" step="0.01" id="s1-c" class="float"></td>
+									<td><input type="number" value="0.16" step="0.01" id="s1-d" class="float"></td>
+									<td><input type="number" value="0.0" step="0.01" id="s1-e" class="float"></td>
+									<td><input type="number" value="0.0" step="0.01" id="s1-f" class="float"></td>
+								</tr>
+								<tr>
+									<td style="color: green">2</td>
+									<td><input type="number" min="0" max="100" value="85" id="s2-p" class="int"></td>
+									<td><input type="number" value="0.85" step="0.01" id="s2-a" class="float"></td>
+									<td><input type="number" value="0.04" step="0.01" id="s2-b" class="float"></td>
+									<td><input type="number" value="-0.04" step="0.01" id="s2-c" class="float"></td>
+									<td><input type="number" value="0.85" step="0.01" id="s2-d" class="float"></td>
+									<td><input type="number" value="0.0" step="0.01" id="s2-e" class="float"></td>
+									<td><input type="number" value="1.6" step="0.01" id="s2-f" class="float"></td>
+								</tr>
+								<tr>
+									<td style="color: blue">3</td>
+									<td><input type="number" min="0" max="100" value="7" id="s3-p" class="int"></td>
+									<td><input type="number" value="0.20" step="0.01" id="s3-a" class="float"></td>
+									<td><input type="number" value="-0.26" step="0.01" id="s3-b" class="float"></td>
+									<td><input type="number" value="0.23" step="0.01" id="s3-c" class="float"></td>
+									<td><input type="number" value="0.22" step="0.01" id="s3-d" class="float"></td>
+									<td><input type="number" value="0.0" step="0.01" id="s3-e" class="float"></td>
+									<td><input type="number" value="1.6" step="0.01" id="s3-f" class="float"></td>
+								</tr>
+								<tr>
+									<td style="color: purple">4</td>
+									<td><input type="number" min="100" max="100" value="7" id="s4-p" class="int" disabled></td>
+									<td><input type="number" value="-0.15" step="0.01" id="s4-a" class="float"></td>
+									<td><input type="number" value="0.28" step="0.01" id="s4-b" class="float"></td>
+									<td><input type="number" value="0.26" step="0.01" id="s4-c" class="float"></td>
+									<td><input type="number" value="0.24" step="0.01" id="s4-d" class="float"></td>
+									<td><input type="number" value="0.0" step="0.01" id="s4-e" class="float"></td>
+									<td><input type="number" value="0.44" step="0.01" id="s4-f" class="float"></td>
+								</tr>
+							</tbody>
+						</table>
+						<br/>
+						<input type="number" style="width: 6em" min="100" value="300" step="100" id="sn-iterruns" name="iterruns">
+						<label for="iterruns">number of iterations (x1000)</label>
+						<br/>
+						<input type="number" style="width: 6em" min="20" value="70" step="10" id="s-zfactor" name="zfactor">
+						<label for="zfactor">scale factor</label>
+						<br/>
+						<input type="checkbox" id="s-use-colors" name="usecolors">
+						<label for="usecolors">use colors</label>
+						<input type="reset" style="float: right;" class="danger" value="reset options" onclick="updateSettings();">
+						<input type="button" style="float: right;" class="semidanger" value="reset canvas" onclick="setupCanvas();">
+						<input type="button" style="float: right;" class="greenbox" value="draw!" onclick="updateSettings();" id="drawbtn">
+					</form>
+				</div>
+				<div class="pane-bottom"></div>
+			</div>
+
+			<div id="pane-preview" class="pane">
+				<div class="pane-title"><h2>Preview</h2></div>
+				<div class="pane-content">
+					<div id="scrollable-canvas" class="">
+						<canvas id="canvas" width="1000px" height="1000px"></canvas>
+					</div>
+				</div>
+				<div class="pane-bottom"></div>
+			</div>
+		</main>
+
+
 		<script>
-			function setupCanvas() {
-					console.info("Resetting canvas");
-					var canvas = document.getElementById("canvas");
-					var	context = canvas.getContext("2d");
-					var width = canvas.width = canvas.offsetWidth;
-					var height = canvas.height = canvas.offsetHeight;
-					context.translate(width / 2, height);
-					context.clearRect(-width, -height, 2 * width, 2 * height);
+			drawBtn = document.getElementById("drawbtn");
+			c = new DraggableCanvas(document.getElementById("canvas"));
+			c.register(0.5, 0.9);
+
+			function setDrawButton(disabled) {
+					var btn = document.getElementById("drawbtn");
+					btn.disabled = disabled;
+					btn.value = disabled ? "drawing..." : "draw!";
 			}
 
 			function readRules() {
@@ -74,7 +182,7 @@
 			function iterate(rules, counter) {
 					if (counter <= 0) {
 							console.info("Redraw finished");
-							document.getElementById("drawbtn").disabled = false;
+							setDrawButton(false);
 							return;
 					}
 					// if (counter % 100 == 0) {
@@ -102,8 +210,8 @@
 					console.info(rules);
 					if (detcheck) {
 							console.info("Redraw");
-							setupCanvas();
-							document.getElementById("drawbtn").disabled = true;
+							c.clear();
+							setDrawButton(true);
 							iterate(rules, 1 * document.getElementById("sn-iterruns").value);
 					} else {
 							for (var i=0; i < 4; i++) {
@@ -114,106 +222,5 @@
 					}
 			}
 		</script>
-	</head>
-	<body onload="updateSettings();">
-		<div id="container">
-			<div id="titlediv">
-				<h1>Barnsley Fern</h1>
-				<a id="back" href="index.html">
-					<img src="https://fonts.gstatic.com/s/i/materialicons/keyboard_arrow_left/v6/24px.svg" alt="Go back"/>
-				</a>
-			</div>
-			<div id="content">
-				<div id="settings-pane" class="pane">
-					<h2>Settings</h2>
-					<div id="settings">
-						<center>adapted from
-							<a href="http://jsbin.com/fevira/1/edit?html,js,output">
-								http://jsbin.com/fevira/1/edit?html,js,output</a></center>
-						<br/>
-						<form onchange="updateSettings();">
-							<p>
-								The functions \(f_n\) have the form
-								\[ f_n \left(\pmatrix{x\\y}\right) := \pmatrix{a & b \\ c
-								& d} \pmatrix{x \\ y} + \pmatrix{e \\ f} \]
-								and will be applied with a probability of \(p_n\)
-							</p>
-							<table>
-								<tbody>
-									<tr>
-										<th class="greyedout">\(n\)</th>
-										<th>\(p_n\)</th>
-										<th>\(a\)</th>
-										<th>\(b\)</th>
-										<th>\(c\)</th>
-										<th>\(d\)</th>
-										<th>\(e\)</th>
-										<th>\(f\)</th>
-										<!-- <th class="greyedout">\(p_n\)</th> -->
-										<!-- <th class="greyedout">\(\det f_n\)</th> -->
-									</tr>
-									<tr>
-										<td style="color: red">1</td>
-										<td><input type="number" min="0" max="100" value="1" id="s1-p" class="int"></td>
-										<td><input type="number" value="0.0" step="0.01" id="s1-a" class="float"></td>
-										<td><input type="number" value="0.0" step="0.01" id="s1-b" class="float"></td>
-										<td><input type="number" value="0.0" step="0.01" id="s1-c" class="float"></td>
-										<td><input type="number" value="0.16" step="0.01" id="s1-d" class="float"></td>
-										<td><input type="number" value="0.0" step="0.01" id="s1-e" class="float"></td>
-										<td><input type="number" value="0.0" step="0.01" id="s1-f" class="float"></td>
-									</tr>
-									<tr>
-										<td style="color: green">2</td>
-										<td><input type="number" min="0" max="100" value="85" id="s2-p" class="int"></td>
-										<td><input type="number" value="0.85" step="0.01" id="s2-a" class="float"></td>
-										<td><input type="number" value="0.04" step="0.01" id="s2-b" class="float"></td>
-										<td><input type="number" value="-0.04" step="0.01" id="s2-c" class="float"></td>
-										<td><input type="number" value="0.85" step="0.01" id="s2-d" class="float"></td>
-										<td><input type="number" value="0.0" step="0.01" id="s2-e" class="float"></td>
-										<td><input type="number" value="1.6" step="0.01" id="s2-f" class="float"></td>
-									</tr>
-									<tr>
-										<td style="color: blue">3</td>
-										<td><input type="number" min="0" max="100" value="7" id="s3-p" class="int"></td>
-										<td><input type="number" value="0.20" step="0.01" id="s3-a" class="float"></td>
-										<td><input type="number" value="-0.26" step="0.01" id="s3-b" class="float"></td>
-										<td><input type="number" value="0.23" step="0.01" id="s3-c" class="float"></td>
-										<td><input type="number" value="0.22" step="0.01" id="s3-d" class="float"></td>
-										<td><input type="number" value="0.0" step="0.01" id="s3-e" class="float"></td>
-										<td><input type="number" value="1.6" step="0.01" id="s3-f" class="float"></td>
-									</tr>
-									<tr>
-										<td style="color: purple">4</td>
-										<td><input type="number" min="100" max="100" value="7" id="s4-p" class="int" disabled></td>
-										<td><input type="number" value="-0.15" step="0.01" id="s4-a" class="float"></td>
-										<td><input type="number" value="0.28" step="0.01" id="s4-b" class="float"></td>
-										<td><input type="number" value="0.26" step="0.01" id="s4-c" class="float"></td>
-										<td><input type="number" value="0.24" step="0.01" id="s4-d" class="float"></td>
-										<td><input type="number" value="0.0" step="0.01" id="s4-e" class="float"></td>
-										<td><input type="number" value="0.44" step="0.01" id="s4-f" class="float"></td>
-									</tr>
-								</tbody>
-							</table>
-							<input type="checkbox" id="s-use-colors"
-										 name="usecolors">
-							<label for="usecolors">use colors</label>
-							<br/>
-							<input type="number" style="width: 6em" min="100" value="1000" step="100" id="sn-iterruns" name="iterruns">
-							<label for="iterruns">number of iterations (x1000)</label>
-							<br/>
-							<input type="number" style="width: 6em" min="20" value="70" step="10" id="s-zfactor" name="zfactor">
-							<label for="zfactor">scale factor</label>
-							<br/>
-							<input type="reset" style="float: right;" class="danger" value="reset options" onclick="updateSettings();">
-							<input type="button" style="float: right;" class="semidanger" value="reset canvas" onclick="setupCanvas();">
-							<input type="button" style="float: right;" class="greenbox" value="draw!" onclick="updateSettings();" id="drawbtn">
-						</form>
-					</div>
-				</div>
-				<div id="preview-pane" class="pane">
-					<canvas id="canvas"></canvas>
-				</div>
-			</div>
-		</div>
 	</body>
 </html>

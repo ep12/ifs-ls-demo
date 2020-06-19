@@ -1,0 +1,35 @@
+main {
+		display: grid;
+		grid-gap: 1rem;
+		box-sizing: border-box;
+		grid-template-areas: "settings preview";
+		grid-template-rows: minmax(0, 1fr);
+		/* grid-template-areas: "settings preview" */
+		/* 						  			 "settings help"; */
+		/* grid-template-rows: minmax(0, 6fr) minmax(0, 5fr); */
+		grid-template-columns: minmax(0, 5fr) minmax(0, 5fr);
+}
+@media (max-width: 70rem) {
+		main {
+				grid-template-areas: "settings" "preview";
+				/* grid-template-rows: 80vh 50vh 50vh; */
+				grid-template-rows: auto minmax(50vh, 90vh);
+				grid-template-columns: minmax(90vw, 100vw);
+		}
+}
+#pane-settings {
+		grid-area: settings;
+}
+#pane-preview {
+		grid-area: preview;
+}
+
+#canvas {
+		/* border: 1px solid red; */
+}
+#scrollable-canvas {
+		/* box-sizing: content-box; */
+		overflow: auto;
+		height: 100%;
+		width: 100%;
+}

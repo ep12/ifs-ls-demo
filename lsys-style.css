@@ -1,0 +1,48 @@
+/* site-specific: L systems */
+main {
+		display: grid;
+		grid-gap: 1rem;
+		box-sizing: border-box;
+		grid-template-areas: "settings preview"
+								  			 "    help preview";
+		grid-template-rows: minmax(0, 7fr) minmax(0, 5fr);
+		/* grid-template-areas: "settings preview" */
+		/* 						  			 "settings help"; */
+		/* grid-template-rows: minmax(0, 6fr) minmax(0, 5fr); */
+		grid-template-columns: minmax(0, 5fr) minmax(0, 5fr);
+}
+@media (max-width: 70rem) {
+		main {
+				grid-template-areas: "settings" "preview" "help";
+				/* grid-template-rows: 80vh 50vh 50vh; */
+				grid-template-rows: auto minmax(50vh, 90vh) auto;
+				grid-template-columns: 1fr;
+		}
+}
+#pane-settings {
+		grid-area: settings;
+}
+#pane-preview {
+		grid-area: preview;
+}
+#pane-help {
+		grid-area: help;
+}
+
+#canvas {
+		/* border: 1px solid red; */
+}
+#scrollable-canvas {
+		/* box-sizing: content-box; */
+		overflow: auto;
+		height: 100%;
+		width: 100%;
+}
+
+.iteration-highlight {
+		min-width: 100%;
+		display: block;
+		padding: 0.1em;
+		background-color: hsl(120, 25%, 85%);
+		margin: 0.2em 0em;
+}

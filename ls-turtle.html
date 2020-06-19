@@ -7,26 +7,26 @@
 		<meta name="description" content="Iterated Function Systems and L-Systems">
 		<meta name="keywords" content="IFS,iterated,function system,
 																	 Lindenmayer System, L-system">
-		<title>L Systems</title>
+		<meta name="theme-color" content="#00519e" />
+		<title>Iterated Function Systems and L-Systems</title>
 		<link rel="stylesheet" href="style.css">
-		<!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
-		<script id="MathJax-script" async
-          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-		</script>
+		<link rel="stylesheet" href="lsys-style.css">
+		<script src="draggable-canvas.js"></script>
 		<script src="ls-parser.js"></script>
+		<script src="turtle-vm.js"></script>
+		<!-- <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"> -->
 	</head>
 	<body>
-		<div id="container">
-			<div id="titlediv">
-				<h1>L-Systems: Turtle-Visualisation</h1>
-				<a id="back" href="index.html">
-					<img src="https://fonts.gstatic.com/s/i/materialicons/keyboard_arrow_left/v6/24px.svg" alt="Go back"/>
-				</a>
-			</div>
-			<div id="content">
-				<div id="settings-pane" class="pane">
-					<h2>Settings</h2>
-					<div id="settings" class="scroll">
+		<header>
+			<h1>L-Systems: Turtle-Visualisation</h1>
+			<a href="index.html" id="back">
+				<img src="https://fonts.gstatic.com/s/i/materialicons/keyboard_arrow_left/v6/24px.svg" alt="Go back"/>
+			</a>
+		</header>
+		<main>
+			<div id="pane-settings" class="pane">
+				<div class="pane-title"><h2>Settings</h2></div>
+				<div class="pane-content scrollable-y">
 						<form>
 							<!-- onchange="updateSettings();" -->
 							<label for="grammar">Grammar definitions:</label>
@@ -53,7 +53,7 @@ r: turn_right{120}
 								<label for="iterruns">Number of iterations</label>
 							</span>
 							<input type="number" style="width: 5em" min="1" value="1.5" step="0.1" id="ssfactor" name="zfactor">
-							<label for="zfactor">Scale factor</label>
+							<label for="zfactor">Inverse scale factor (zoom out)</label>
 							<br/>
 							<input type="checkbox" name="animate" id="sanimate" checked="true">
 							<label for="animate">Animate (slower)</label>
@@ -66,74 +66,150 @@ r: turn_right{120}
 						<br/>
 						<table id="wordlengths-table">
 						</table>
-					</div>
 				</div>
-				<div id="preview-pane" class="pane">
-					<div class="flex-container">
-						<canvas id="canvas" class="hsixtenth"></canvas>
-						<div class="flex-shrinkgrow whitescrollbox topmargin">
-							<div id="helpbox">
-								<h3><u>Help</u></h3>
-								This pane will help you understand the settings in the left pane.
-								<h4>Grammar &amp; Turtle commands</h4>
-								<p class="indent">
-									Here you can define the <var>actions</var> associated with a <var>letter</var> that can be used to produce pretty images:<br/>
-									<code class="block">
-										<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
-										<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
-										<b>;;</b> A comment line starts with two semicolons. Inline comments are not allowed.<br/>
-										...
-									</code>
-									<var>Letter</var> is a single character, followed by a colon. The allowed <var>action</var>s are the following:
-									<ul>
-										<li><code>draw_forward{length}</code>: Move the turtle foward while drawing a line</li>
-										<li><code>jump_forward{length}</code>: Move the turtle foward without drawing a line</li>
-										<li><code>turn_left{angle}</code>: Turn the turtle <var>angle</var> degrees to the left</li>
-										<li><code>turn_right{angle}</code>: Turn the turtle <var>angle</var> degrees to the right</li>
-										<li><code>set_direction{angle}</code>: Set the direction to <var>angle</var></li>
-										<li><code>no_operation</code>: Do nothing</li>
-										<li><code>set_color{color}</code> changes the stroke color to <var>color</var></li>
-										<li><code>set_linewidth{width}</code> sets the linewidth of the segments.
-											<code>x: set_linewidth{this.iteration}</code> will increase the line width with every iteration a bit because
-											the final image is often scaled down. Do not forget to add <code>x</code> to your axiom!</li>
-										<!-- TODO -->
-									</ul>
-								</p>
-
-								<h4>Axiom</h4>
-								<p class="indent">
-									The axiom is the starting point. From there the application of replacement rules will hopefully lead you to some
-									amazing fractals!
-								</p>
-
-								<h4>Replacement Rules</h4>
-								<p class="indent">
-									The core of an L system is the set of replacement rules that determine the changes when iterating.
-									A rule consists of two parts:
-								</p>
-								<ol>
-									<li>A letter to replace.</li>
-									<li>A word (sequence of letters) to replace the letter with.</li>
-								</ol>
-								<p class="indent">
-									Similar to the syntax you already know from the grammar definition, you can simply define replacement rules like this:
-									<code class="block">
-										<var>&lt;letter a&gt;</var>: <var>&lt;letter a1&gt;</var><var>&lt;letter 2&gt;</var><var>&lt;letter a3&gt;</var>...<br/>
-										<var>&lt;letter b&gt;</var>: <var>&lt;letter b1&gt;</var><var>&lt;letter b2&gt;</var>...<br/>
-									</code>
-									E. g.:
-									<code class="block">
-										F: GFLFRRFFLLFRFG<br/>
-										G: GG<br/>
-									</code>
-									<i>Note that comments are not allowed!</i>
-								</p>
-							</p>
-						</div>
-					</div>
-				</div>
+				<div class="pane-bottom"></div>
 			</div>
-		</div>
-		<script src="ls-canvas.js"></script>
+
+			<div id="pane-preview" class="pane">
+				<div class="pane-title"><h2>Preview</h2></div>
+				<div class="pane-content">
+					<div id="scrollable-canvas" class="">
+						<canvas id="canvas" width="1000px" height="1000px"></canvas>
+					</div>
+				</div>
+				<div class="pane-bottom"></div>
+			</div>
+
+			<div id="pane-help" class="pane">
+				<div class="pane-title"><h2>Help</h2></div>
+				<div class="pane-content">
+					<div class="scrollable-y">
+						<h3><u>Help</u></h3>
+						This pane will help you understand the settings in the left pane.
+						<h4>Grammar &amp; Turtle commands</h4>
+						<p class="indent">
+							Here you can define the <var>actions</var> associated with a <var>letter</var> that can be used to produce pretty images:<br/>
+							<code class="block">
+								<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
+								<var>letter</var>: <var>action</var>{<var>paramter</var>}; <var>action</var>{<var>paramter</var>}; ...<br />
+								<b>;;</b> A comment line starts with two semicolons. Inline comments are not allowed.<br/>
+								...
+							</code>
+							<var>Letter</var> is a single character, followed by a colon. The allowed <var>action</var>s are the following:
+							<ul>
+								<li><code>draw_forward{length}</code>: Move the turtle foward while drawing a line</li>
+								<li><code>jump_forward{length}</code>: Move the turtle foward without drawing a line</li>
+								<li><code>turn_left{angle}</code>: Turn the turtle <var>angle</var> degrees to the left</li>
+								<li><code>turn_right{angle}</code>: Turn the turtle <var>angle</var> degrees to the right</li>
+								<li><code>set_direction{angle}</code>: Set the direction to <var>angle</var></li>
+								<li><code>no_operation</code>: Do nothing</li>
+								<li><code>set_color{color}</code> changes the stroke color to <var>color</var></li>
+								<li><code>set_linewidth{width}</code> sets the linewidth of the segments.
+									<code>x: set_linewidth{this.iteration}</code> will increase the line width with every iteration a bit because
+									the final image is often scaled down. Do not forget to add <code>x</code> to your axiom!</li>
+								<!-- TODO -->
+							</ul>
+						</p>
+
+						<h4>Axiom</h4>
+						<p class="indent">
+							The axiom is the starting point. From there the application of replacement rules will hopefully lead you to some
+							amazing fractals!
+						</p>
+
+						<h4>Replacement Rules</h4>
+						<p class="indent">
+							The core of an L system is the set of replacement rules that determine the changes when iterating.
+							A rule consists of two parts:
+						</p>
+						<ol>
+							<li>A letter to replace.</li>
+							<li>A word (sequence of letters) to replace the letter with.</li>
+						</ol>
+						<p class="indent">
+							Similar to the syntax you already know from the grammar definition, you can simply define replacement rules like this:
+							<code class="block">
+								<var>&lt;letter a&gt;</var>: <var>&lt;letter a1&gt;</var><var>&lt;letter 2&gt;</var><var>&lt;letter a3&gt;</var>...<br/>
+								<var>&lt;letter b&gt;</var>: <var>&lt;letter b1&gt;</var><var>&lt;letter b2&gt;</var>...<br/>
+							</code>
+							E. g.:
+							<code class="block">
+								F: GFLFRRFFLLFRFG<br/>
+								G: GG<br/>
+							</code>
+							<i>Note that comments are not allowed!</i>
+						</p>
+					</div>
+				</div>
+				<div class="pane-bottom"></div>
+			</div>
+		</main>
+
+		<script>
+			drawBtn = document.getElementById("drawbtn");
+			c = new DraggableCanvas(document.getElementById("canvas"));
+			c.register();
+			turtle = new Turtle(c, {}, 0, 0); // canvas, grammar, phi0, iteration
+
+			function setupCanvas() {
+					// console.log("Setting up canvas");
+					turtle.kill();
+					c.clear();
+			}
+
+			function afterDrawingCallback() {
+					console.info("Drawing done");
+					drawBtn.value = "draw!";
+					drawBtn.disabled = false;
+			}
+
+			function updateSettings() {
+					console.clear();
+
+					drawBtn.disabled = true;
+					drawBtn.value = "drawing...";
+					var animate = document.getElementById("sanimate").checked;
+
+					// c.resizeCanvas(); // TODO
+					console.info("Updating settings");
+					var grammar = parseGrammar();
+					var alphabet = Object.keys(grammar);
+					console.info("Grammar:", grammar);
+					console.info("Alphabet:", alphabet);
+					try {
+							var axiom = parseAxiom(alphabet);
+							console.info("Axiom:", axiom);
+					} catch (e) {
+							console.error("updateSettings failed!");
+							return;
+					}
+					var rules = parseReplacementRules(alphabet);
+					console.info("Rules:", rules);
+
+					var niterations = 1 * document.getElementById("sn-iterruns").value;
+					var scale = 1 * document.getElementById("ssfactor").value;
+					console.info("Number of iterations:", niterations);
+					for (i=0; i<=niterations; i++) {
+							console.info(doReplacement(axiom, rules, i).length);
+					};
+					// TEMP: This table gets very long...
+					// makeWordlengthTable(axiom, rules, niterations);
+
+					// var turtle = new Turtle(c, grammar, 0, niterations); // canvas, grammar, phi0, iteration
+					turtle.reset();
+					turtle.iteration = niterations;
+					turtle.grammar = grammar;
+					turtle.doTheJob(doReplacement(axiom, rules, niterations),
+													animate, scale, afterDrawingCallback, drawBtn);
+					console.log(c.currentBBox);
+			}
+			// var c = x.ctx;
+			// c.moveTo(-500, -500);
+			// c.lineTo(500, 500);
+			// c.moveTo(500, -500);
+			// c.lineTo(-500, 500);
+			// c.strokeRect(100, 100, 30, 40);
+			// c.stroke();
+		</script>
 	</body>
 </html>
