@@ -43,7 +43,7 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 				this.dead = false;
 		}
 		this.state = function() {
-				return {"x": this.x, "y": this.x, "phi": this.phi, "color": this.color, "lineWidth": this.lineWidth};
+				return {"x": this.x, "y": this.y, "phi": this.phi, "color": this.color, "lineWidth": this.lineWidth};
 		}
 
 		this.getXDest = function(length) {return this.x + length * Math.cos(this.phi)};
@@ -118,6 +118,11 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 						return 1
 				}
 				Object.keys(s).forEach(x => this[x] = s[x]);
+		}
+		this.dump_state = function(par) {
+				var s = this.state();
+				s["savedStates"] = this.savedStates;
+				console.info("dump_state:", JSON.stringify(s));
 		}
 
 
