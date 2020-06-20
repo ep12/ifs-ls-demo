@@ -109,7 +109,9 @@ function doReplacement(word, rules, iterations = 1) {
 function makeWordlengthTable(axiom, rules, iterations) {
 		var word = axiom;
 		var tablenode = document.getElementById("wordlengths-table");
-		tablenode.removeChild(tablenode.firstChild);
+		try {
+				tablenode.removeChild(tablenode.firstChild);
+		} catch (e) {};
 		var tbnode = document.createElement('tbody');
 		var thr = tbnode.insertRow();
 		thr.insertCell().appendChild(document.createTextNode("Iteration"));

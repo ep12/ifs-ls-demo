@@ -8,7 +8,7 @@
 		<meta name="keywords" content="IFS,iterated,function system,
 																	 Lindenmayer System, L-system">
 		<meta name="theme-color" content="#00519e" />
-		<title>Iterated Function Systems and L-Systems</title>
+		<title>L-Systems</title>
 		<link rel="stylesheet" href="style.css">
 		<link rel="stylesheet" href="lsys-style.css">
 		<script src="draggable-canvas.js"></script>
@@ -18,7 +18,7 @@
 	</head>
 	<body>
 		<header>
-			<h1>L-Systems: Turtle-Visualisation</h1>
+			<h1>L-Systems</h1>
 			<a href="index.html" id="back">
 				<img src="https://fonts.gstatic.com/s/i/materialicons/keyboard_arrow_left/v6/24px.svg" alt="Go back"/>
 			</a>
@@ -58,14 +58,17 @@ r: turn_right{120}
 							<input type="checkbox" name="animate" id="sanimate" checked="true">
 							<label for="animate">Animate (slower)</label>
 							<!-- <br/> -->
-							<input type="reset" style="float: right;" class="danger" value="reset options" onclick="updateSettings();">
-							<input type="button" style="float: right;" class="semidanger" value="reset canvas" onclick="setupCanvas();">
-							<input type="button" style="float: right;" class="greenbox" value="draw!" onclick="updateSettings();" id="drawbtn">
+							<span style="display: block">
+								<input type="reset" style="float: right;" class="danger" value="reset options" onclick="updateSettings();">
+								<input type="button" style="float: right;" class="semidanger" value="reset canvas" onclick="setupCanvas();">
+								<input type="button" style="float: right;" class="greenbox" value="draw!" onclick="updateSettings();" id="drawbtn">
+							</span>
 						</form>
 						<br/>
 						<br/>
-						<table id="wordlengths-table">
-						</table>
+						<center>
+							<table id="wordlengths-table"></table>
+						</center>
 				</div>
 				<div class="pane-bottom"></div>
 			</div>
@@ -84,7 +87,6 @@ r: turn_right{120}
 				<div class="pane-title"><h2>Help</h2></div>
 				<div class="pane-content">
 					<div class="scrollable-y">
-						<h3><u>Help</u></h3>
 						This pane will help you understand the settings in the left pane.
 						<h4>Grammar &amp; Turtle commands</h4>
 						<p class="indent">
@@ -101,12 +103,17 @@ r: turn_right{120}
 								<li><code>jump_forward{length}</code>: Move the turtle foward without drawing a line</li>
 								<li><code>turn_left{angle}</code>: Turn the turtle <var>angle</var> degrees to the left</li>
 								<li><code>turn_right{angle}</code>: Turn the turtle <var>angle</var> degrees to the right</li>
+								<li><code>save_state</code>: Save the current state (position &amp; direction)</li>
+								<li><code>restore_state</code>: Pop a saved state off the stack and restore it</li>
 								<li><code>set_direction{angle}</code>: Set the direction to <var>angle</var></li>
+								<li><code>set_position{[x, y]}</code>: Set the absolute position to (<var>x</var>, <var>y</var>)</li>
 								<li><code>no_operation</code>: Do nothing</li>
 								<li><code>set_color{color}</code> changes the stroke color to <var>color</var></li>
 								<li><code>set_linewidth{width}</code> sets the linewidth of the segments.
 									<code>x: set_linewidth{this.iteration}</code> will increase the line width with every iteration a bit because
 									the final image is often scaled down. Do not forget to add <code>x</code> to your axiom!</li>
+								<li><code>dump_state</code>: dump the current state. This is useful for debugging, so you probably do not need this.
+									To see the dumped state, open the development console (press <kbd>F12</kbd>) and navigate to the console tab.</li>
 								<!-- TODO -->
 							</ul>
 						</p>
@@ -193,7 +200,7 @@ r: turn_right{120}
 							console.info(doReplacement(axiom, rules, i).length);
 					};
 					// TEMP: This table gets very long...
-					// makeWordlengthTable(axiom, rules, niterations);
+					makeWordlengthTable(axiom, rules, niterations);
 
 					// var turtle = new Turtle(c, grammar, 0, niterations); // canvas, grammar, phi0, iteration
 					turtle.reset();

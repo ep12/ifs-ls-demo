@@ -46,3 +46,9 @@ main {
 		background-color: hsl(120, 25%, 85%);
 		margin: 0.2em 0em;
 }
+
+@media (min-width: 30rem) {
+		h1:after {
+				content: ": Turtle Visualisation";
+		}
+}

@@ -100,6 +100,18 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 				var angDeg = scopeEval(this, par);
 				this.phi = -angDeg * Math.PI / 180;
 		}
+		this.set_position = function(par) {
+				var tup = scopeEval(this, par);
+				if (typeof(tup) != "object"
+						|| !tup.hasOwnProperty("length")
+						|| tup.length < 2
+						|| !Array.from(tup).every(x => typeof(x) == "number")) {
+						this.error(`Cannot set position: ${tup} is not a tuple of two numbers`)
+						return 1
+				}
+				this.x = tup[0];
+				this.y = tup[1];
+		}
 		this.no_operation = function(par) {};
 		this.set_color = function(par) {
 				this.color = scopeEval(this, par);
