@@ -134,6 +134,22 @@
 					btn.value = disabled ? "drawing..." : "draw!";
 			}
 
+			function checkContraction(s, i) {
+					var a = s["a"], b = s["b"], c = s["c"], d = s["d"];
+					var u = a ** 2 + c ** 2, v = b ** 2 + d ** 2, w = a * b + c * d;
+					if (u == v && (u + v) / 2 + u - v >= 1) {
+					var msg = `f_${i+1} is not a contraction!\nu=${u},\nv=${v},\nw=${w}`;
+							console.error(msg); alert(msg); return 1;
+					}
+					var sign = u > v ? 1 : -1;
+					var s = 2 * w / (u - v);
+					var t = 1 / Math.sqrt(1 + s ** 2);
+					if ((u + v) / 2 + (Math.abs(u - v) / 2 + 2 * sign * w * s) * t >= 1) {
+							var msg = `f_${i+1} is not a contraction!\nu=${u}\nv=${v}\nw=${w}\ns=${s}\nt=${t}`;
+							console.error(msg); alert(msg); return 1;
+					}
+			}
+
 			function readRules() {
 					var nrules = [{"color": "red"}, {"color": "green"},
 												{"color": "blue"}, {"color": "purple"}];
@@ -154,8 +170,9 @@
 
 					var check = true;
 					for (var i = 0; i < 4; i++) {
-							var d = nrules[i]["det"] = nrules[i]["a"] * nrules[i]["d"] - nrules[i]["b"] * nrules[i]["c"];
-							if (Math.abs(d) >= 1) check = "det";
+							var x = nrules[i];
+							// var d = x["det"] = x["a"] * x["d"] - x["b"] * x["c"];
+							checkContraction(x, i);
 					}
 					return [nrules, check];
 			}
