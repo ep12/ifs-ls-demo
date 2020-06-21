@@ -11,6 +11,7 @@
 		<title>L-Systems</title>
 		<link rel="stylesheet" href="style.css">
 		<link rel="stylesheet" href="lsys-style.css">
+		<script src="collapsible-pane.js"></script>
 		<script src="draggable-canvas.js"></script>
 		<script src="ls-parser.js"></script>
 		<script src="turtle-vm.js"></script>
@@ -23,9 +24,9 @@
 				<img src="https://fonts.gstatic.com/s/i/materialicons/keyboard_arrow_left/v6/24px.svg" alt="Go back"/>
 			</a>
 		</header>
-		<main>
+		<main id="main">
 			<div id="pane-settings" class="pane">
-				<div class="pane-title"><h2>Settings</h2></div>
+				<div class="pane-title" title="Click to minimise this pane"><h2>Settings</h2></div>
 				<div class="pane-content scrollable-y">
 						<form>
 							<!-- onchange="updateSettings();" -->
@@ -84,7 +85,7 @@ r: turn_right{120}
 			</div>
 
 			<div id="pane-help" class="pane">
-				<div class="pane-title"><h2>Help</h2></div>
+				<div class="pane-title" title="Click to minimise this pane"><h2>Help</h2></div>
 				<div class="pane-content">
 					<div class="scrollable-y">
 						This pane will help you understand the settings in the left pane.
@@ -110,7 +111,7 @@ r: turn_right{120}
 								<li><code>no_operation</code>: Do nothing</li>
 								<li><code>set_color{color}</code> changes the stroke color to <var>color</var></li>
 								<li><code>set_linewidth{width}</code> sets the linewidth of the segments.
-									<code>x: set_linewidth{this.iteration}</code> will increase the line width with every iteration a bit because
+									<code class="block">x: set_linewidth{this.iteration}</code> will increase the line width with every iteration a bit because
 									the final image is often scaled down. Do not forget to add <code>x</code> to your axiom!</li>
 								<li><code>dump_state</code>: dump the current state. This is useful for debugging, so you probably do not need this.
 									To see the dumped state, open the development console (press <kbd>F12</kbd>) and navigate to the console tab.</li>
@@ -146,6 +147,27 @@ r: turn_right{120}
 							</code>
 							<i>Note that comments are not allowed!</i>
 						</p>
+
+						<h4>Tips &amp; Tricks</h4>
+						<p>
+							To simplify the implementation of this mini programming language, a bad practice is used: the parameters
+							are parsed and executed as JavaScript. That is probably not ideal, but it enables us to do <i>quite fancy stuff</i>:
+						</p>
+						<ul>
+							<li>We know in which state the turtle is. As you have already seen, we can access the current iteration number with <code>this.iteration</code>.</li>
+							<li>We can use math:
+								<code class="block">
+									F: draw_forward{Math.sqrt(1764)}
+								</code>
+							</li>
+							<li>We can introduce randomness: Just use <code>Math.rand(<var>min</var>, <var>max</var>)</code> and <code>Math.randNorm(<var>avg</var>, <var>std</var>)</code>, e. g.:
+								<code class="block">
+									F: draw_forward{Math.randNorm(50, 10)}<br/>
+									G: set_direction{Math.rand(0, 2 * Math.PI)}
+								</code>
+								The first macro draws a line with a length that is normally distributed around 50 with a standard deviation of 10. The second macro chooses a random direction.
+							</li>
+						</ul>
 					</div>
 				</div>
 				<div class="pane-bottom"></div>
@@ -153,6 +175,23 @@ r: turn_right{120}
 		</main>
 
 		<script>
+			p1 = new CollapsiblePane("pane-help", "click");
+			p2 = new CollapsiblePane("pane-settings", "click");
+			p1.hideHandler = function() {
+					if (!p2.isVisible()) p2.toggle();
+					document.getElementById("main").style.gridTemplateRows = "minmax(0, 1fr) auto";
+			};
+			p1.showHandler = function() {
+					document.getElementById("main").style.gridTemplateRows = "";
+			};
+			p2.hideHandler = function() {
+					if (!p1.isVisible()) p1.toggle();
+					document.getElementById("main").style.gridTemplateRows = "auto minmax(0, 1fr)";
+			};
+			p2.showHandler = function() {
+					document.getElementById("main").style.gridTemplateRows = "";
+			};
+
 			drawBtn = document.getElementById("drawbtn");
 			c = new DraggableCanvas(document.getElementById("canvas"));
 			c.register();

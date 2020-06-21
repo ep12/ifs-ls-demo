@@ -74,6 +74,9 @@ function isWordOfAlphabet(alphabet, word) {
 function filterGoodLetters(alphabet, word) {
 		return Array.from(word).filter(x => alphabet.includes(x)).join("");
 }
+function filterBadLetters(alphabet, word) {
+		return Array.from(word).filter(x => !alphabet.includes(x)).join(", ");
+}
 
 function parseReplacementRules(alphabet) {
 		var repnode = document.getElementById("srules");
@@ -90,7 +93,7 @@ function parseReplacementRules(alphabet) {
 				var letter = lm[1];
 				var replacement = lm[2];
 				if (!isWordOfAlphabet(alphabet, replacement)) {
-						warnings.push(`Line ${i+1}: illegal letters in "${replacement}". Ignoring bad characters.`);
+						warnings.push(`Line ${i+1}: illegal letters in "${replacement}". Ignoring bad letters: ${filterBadLetters(alphabet, replacement)}`);
 						rules[letter] = filterGoodLetters(alphabet, replacement);
 				} else {
 						rules[letter] = replacement;

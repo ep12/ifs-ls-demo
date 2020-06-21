@@ -136,6 +136,10 @@ function Turtle(canvas, grammar, phiDeg = 0, iteration = null) {
 				s["savedStates"] = this.savedStates;
 				console.info("dump_state:", JSON.stringify(s));
 		}
+		this.execute_code = function(par) {
+				try {scopeEval(this, par)}
+				catch (e) {return 1}
+		}
 
 
 		// -----------------------------------------------------------------------
